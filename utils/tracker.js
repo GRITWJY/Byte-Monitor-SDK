@@ -1,7 +1,10 @@
-import { setConfig, genkey, getConfig } from "../config";
-
+import { setConfig, genkey, getConfig, getUserConfig } from "../config";
+import axios from "axios";
 class SenderTracker {
   constructor() {
+    this.user = false; // 这个表示当前数据库中没有这个用户
+    this.cache = [];
+
     let userId = localStorage.getItem("userId");
     if (!userId) {
       userId = genkey(JSON.stringify(getConfig()), 32);
@@ -10,26 +13,39 @@ class SenderTracker {
     setConfig({ userId });
   }
 
+  // todo: 正常数据上报不用screen,selector等等
   send(data = {}) {
+    // 上传用户信息
+    if (!this.user) {
+      axios
+        .post("http://localhost:3005/sdk/saveUser", getUserConfig())
+        .then((res) => {
+          console.log(res);
+        });
+      this.user = true;
+    }
+
+    // 其他正常信息
     let extraData = getConfig();
-    delete extraData.vue;
     extraData.page = window.location.href;
 
     let log = { ...extraData, ...data };
-    console.log(log);
-    // for (const key in log) {
-    //   log[key] = JSON.stringify(log[key]);
-    // }
-    // let body = JSON.stringify({
-    //   __logs__: [log],
-    // });
-    // this.xhr.open("POST", this.url, true);
-    // this.xhr.setRequestHeader("Content-Type", "application/json;uft-8"); // 请求体类型
-    // this.xhr.setRequestHeader("x-log-apiversion", "0.6.0"); // 请求版本号
-    // this.xhr.setRequestHeader("x-log-bodyrawsize", body.length); // 请求体大小
-    // this.xhr.onload = function () {};
-    // this.xhr.onerror = function (error) {};
-    // this.xhr.send(body);
+    // 转成字符串
+    for (const key in log) {
+      log[key] = JSON.stringify(log[key]);
+    }
+    this.cache.push(log);
+    console.log(this.cache.length);
+    // 10条一次上传
+    if (this.cache.length >= 10) {
+      // 数据上报, 一个接口, 服务端做判断?
+      axios
+        .post("http://localhost:3005/sdk/transportData", this.cache)
+        .then((res) => {
+          console.log(res);
+        });
+      this.cache = [];
+    }
   }
 }
 

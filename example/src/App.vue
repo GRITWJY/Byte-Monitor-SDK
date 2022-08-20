@@ -47,6 +47,7 @@ export default {
       reader.readAsText(file, "UTF-8");
       reader.onload = async (event) => {
         const look_source = await _this.lookSource(event.target.result, 1, 171);
+        console.log(look_source);
       };
     });
   },

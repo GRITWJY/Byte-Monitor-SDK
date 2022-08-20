@@ -4,7 +4,8 @@ let crypto = require("crypto");
 const config = {
   appId: "",
   page: "",
-  timeStamp: Date.now(),
+  userId: "",
+  timestamp: Date.now(),
   userAgent: userAgent.parse(navigator.userAgent),
   screen: `${window.screen.width * window.devicePixelRatio} * ${
     window.screen.height * window.devicePixelRatio
@@ -33,8 +34,19 @@ export function genkey(secret, length = 32) {
     .substr(0, length);
 }
 
+export function getUserConfig() {
+  let obj = { ...config };
+  obj.timestamp = new Date().toLocaleString();
+  delete obj.vue;
+  delete obj.page;
+  return obj;
+}
+
 export function getConfig() {
   let obj = { ...config };
+  obj.timestamp = new Date().toLocaleString();
   delete obj.vue;
+  delete obj.userAgent;
+  delete obj.screen;
   return obj;
 }

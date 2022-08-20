@@ -1,13 +1,13 @@
 {
   "name": "wjy-monitor",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "一个前端监控的SDK",
   "main": "index.js",
   "license": "ISC",
-  "homepage": "https://github.com/GRITWJY/wjy-monitor",
+  "homepage": "https://github.com/GRITWJY/wjyMonitor",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/GRITWJY/wjy-monitor.git"
+    "url": "git+https://github.com/GRITWJY/wjyMonitor.git"
   },
   "keywords": [
     "monitor",
@@ -23,5 +23,9 @@
     "crypto-browserify": "^3.12.0",
     "path-browserify": "^1.0.1",
     "stream-browserify": "^3.0.0"
+  },
+  "dependencies": {
+    "axios": "^0.27.2",
+    "qs": "^6.11.0"
   }
 }
